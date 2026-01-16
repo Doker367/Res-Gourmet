@@ -4,36 +4,62 @@ services:
   # Backend API
   backend:
     build:
-      context: ./backend
+      context: /opt/repos/Res-Gourmet/backend
       dockerfile: Dockerfile
-    container_name: restaurant-backend
-    ports:
-      - "3001:3001"
+    container_name: res-gourmet-backend
     environment:
       - NODE_ENV=production
       - PORT=3001
-      - CORS_ORIGIN=http://localhost
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
+      - CORS_ORIGIN=https://res-gourmet.midominio.com
     restart: unless-stopped
     networks:
-      - restaurant-network
+      - web
+    labels:
+      # Habilitar Traefik para este servicio
+      - "traefik.enable=true"
+      # Especificar la red Docker que usará Traefik
+      - "traefik.docker.network=web"
+      # Configurar el router HTTP (redirección a HTTPS)
+      - "traefik.http.routers.res-gourmet-backend.rule=Host(`api.res-gourmet.midominio.com`)"
+      - "traefik.http.routers.res-gourmet-backend.entrypoints=web"
+      - "traefik.http.routers.res-gourmet-backend.middlewares=redirect-to-https@file"
+      # Configurar el router HTTPS
+      - "traefik.http.routers.res-gourmet-backend-secure.rule=Host(`api.res-gourmet.midominio.com`)"
+      - "traefik.http.routers.res-gourmet-backend-secure.entrypoints=websecure"
+      - "traefik.http.routers.res-gourmet-backend-secure.tls=true"
+      - "traefik.http.routers.res-gourmet-backend-secure.tls.certresolver=letsencrypt"
+      # Especificar el puerto interno del contenedor
+      - "traefik.http.services.res-gourmet-backend.loadbalancer.server.port=3001"
 
   # Frontend
   frontend:
     build:
-      context: ./frontend
+      context: /opt/repos/Res-Gourmet/frontend
       dockerfile: Dockerfile
-    container_name: restaurant-frontend
-    ports:
-      - "80:80"
+    container_name: res-gourmet-frontend
     depends_on:
       - backend
     restart: unless-stopped
     networks:
-      - restaurant-network
+      - web
+    labels:
+      # Habilitar Traefik para este servicio
+      - "traefik.enable=true"
+      # Especificar la red Docker que usará Traefik
+      - "traefik.docker.network=web"
+      # Configurar el router HTTP (redirección a HTTPS)
+      - "traefik.http.routers.res-gourmet-frontend.rule=Host(`res-gourmet.midominio.com`)"
+      - "traefik.http.routers.res-gourmet-frontend.entrypoints=web"
+      - "traefik.http.routers.res-gourmet-frontend.middlewares=redirect-to-https@file"
+      # Configurar el router HTTPS
+      - "traefik.http.routers.res-gourmet-frontend-secure.rule=Host(`res-gourmet.midominio.com`)"
+      - "traefik.http.routers.res-gourmet-frontend-secure.entrypoints=websecure"
+      - "traefik.http.routers.res-gourmet-frontend-secure.tls=true"
+      - "traefik.http.routers.res-gourmet-frontend-secure.tls.certresolver=letsencrypt"
+      # Especificar el puerto interno del contenedor (Nginx escucha en 80 por defecto)
+      - "traefik.http.services.res-gourmet-frontend.loadbalancer.server.port=80"
 
 networks:
-  restaurant-network:
-    driver: bridge
+  # Red externa compartida con Traefik
+  web:
+    external: true

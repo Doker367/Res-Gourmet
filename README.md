@@ -72,32 +72,93 @@ LARCAD/
 ### Requisitos
 - Node.js 18+ instalado
 - npm o yarn
+- Docker y Docker Compose (opcional, para deployment)
 
-### 1. Clonar/Descargar el proyecto
+---
 
-### 2. Instalar dependencias del Backend
+### 🔧 Desarrollo Local (sin Docker)
+
+#### 1. Clonar/Descargar el proyecto
+
+#### 2. Configurar variables de entorno
+
+**Backend:**
+```bash
+cd backend
+cp .env.example .env.development
+# Edita .env.development con tus valores
+```
+
+**Frontend:**
+```bash
+cd frontend
+cp .env.example .env.development
+# Edita .env.development con tus valores
+```
+
+#### 3. Instalar dependencias del Backend
 ```bash
 cd backend
 npm install
 ```
 
-### 3. Instalar dependencias del Frontend
+#### 4. Instalar dependencias del Frontend
 ```bash
 cd frontend
 npm install
 ```
 
-### 4. Ejecutar el Backend (Terminal 1)
+#### 5. Ejecutar el Backend (Terminal 1)
 ```bash
 cd backend
 npm run dev
 ```
 El servidor se ejecutará en `http://localhost:3001`
 
-### 5. Ejecutar el Frontend (Terminal 2)
+#### 6. Ejecutar el Frontend (Terminal 2)
 ```bash
 cd frontend
 npm run dev
+```
+La aplicación se abrirá en `http://localhost:5173`
+
+---
+
+### 🐳 Desarrollo con Docker (Recomendado)
+
+#### 1. Iniciar con Docker Compose
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+#### 2. Ver logs
+```bash
+docker-compose -f docker-compose.dev.yml logs -f
+```
+
+#### 3. Detener
+```bash
+docker-compose -f docker-compose.dev.yml down
+```
+
+---
+
+### 🚀 Despliegue en Producción
+
+Para despliegue en producción con Traefik y Docker, consulta la [Guía de Despliegue](./DEPLOYMENT.md).
+
+**Pasos rápidos:**
+
+1. Configurar archivos `.env.production` en backend y frontend
+2. Ajustar dominios en `docker-compose.yml`
+3. Ejecutar script de despliegue:
+
+```bash
+chmod +x deploy.sh
+./deploy.sh production
+```
+
+Ver [DEPLOYMENT.md](./DEPLOYMENT.md) para instrucciones detalladas.
 ```
 La aplicación se abrirá en `http://localhost:5173`
 
@@ -149,6 +210,12 @@ Edita el array `menuItems` en `frontend/src/components/MenuSection.jsx`.
 
 ### Modificar respuestas del chatbot
 Edita el objeto `responses` en `backend/controllers/chatbotController.js`.
+
+## 📄 Documentación
+
+- [README.md](./README.md) - Este archivo
+- [DEPLOYMENT.md](./DEPLOYMENT.md) - Guía completa de despliegue en producción
+- [DOCKER.md](./DOCKER.md) - Documentación de Docker
 
 ## 📄 Licencia
 

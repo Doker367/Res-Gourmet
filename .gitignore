@@ -7,10 +7,20 @@ backend/node_modules/
 dist/
 build/
 
-# Environment files
+# Environment files - NO subir archivos de configuración con datos sensibles
 .env
+.env.local
+.env.production
+.env.development
+.env*.local
 backend/.env
+backend/.env.production
+backend/.env.development
+backend/.env.local
 frontend/.env
+frontend/.env.production
+frontend/.env.development
+frontend/.env.local
 
 # Logs
 *.log

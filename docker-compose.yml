@@ -12,13 +12,11 @@ services:
       - PORT=3001
       - CORS_ORIGIN=https://res-gourmet.midominio.com
     restart: unless-stopped
-    networks:
-      - web
     labels:
       # Habilitar Traefik para este servicio
       - "traefik.enable=true"
       # Especificar la red Docker que usará Traefik
-      - "traefik.docker.network=web"
+      - "traefik.docker.network=bridge"
       # Configurar el router HTTP (redirección a HTTPS)
       - "traefik.http.routers.res-gourmet-backend.rule=Host(`api.res-gourmet.midominio.com`)"
       - "traefik.http.routers.res-gourmet-backend.entrypoints=web"
@@ -40,13 +38,11 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
-    networks:
-      - web
     labels:
       # Habilitar Traefik para este servicio
       - "traefik.enable=true"
       # Especificar la red Docker que usará Traefik
-      - "traefik.docker.network=web"
+      - "traefik.docker.network=bridge"
       # Configurar el router HTTP (redirección a HTTPS)
       - "traefik.http.routers.res-gourmet-frontend.rule=Host(`res-gourmet.midominio.com`)"
       - "traefik.http.routers.res-gourmet-frontend.entrypoints=web"
@@ -59,7 +55,3 @@ services:
       # Especificar el puerto interno del contenedor (Nginx escucha en 80 por defecto)
       - "traefik.http.services.res-gourmet-frontend.loadbalancer.server.port=80"
 
-networks:
-  # Red externa compartida con Traefik
-  web:
-    external: true

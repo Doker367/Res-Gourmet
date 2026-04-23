@@ -44,14 +44,16 @@ services:
       # Especificar la red Docker que usará Traefik
       - "traefik.docker.network=bridge"
       # Configurar el router HTTP (redirección a HTTPS)
-      - "traefik.http.routers.res-gourmet-frontend.rule=Host(`res-gourmet.midominio.com`)"
-      - "traefik.http.routers.res-gourmet-frontend.entrypoints=web"
-      - "traefik.http.routers.res-gourmet-frontend.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.gourmet.rule=PathPrefix(`/gourmet`)"
+      - "traefik.http.routers.gourmet.entrypoints=web"
+      - "traefik.http.routers.gourmet.middlewares=strip-gourmet"
       # Configurar el router HTTPS
-      - "traefik.http.routers.res-gourmet-frontend-secure.rule=Host(`res-gourmet.midominio.com`)"
-      - "traefik.http.routers.res-gourmet-frontend-secure.entrypoints=websecure"
-      - "traefik.http.routers.res-gourmet-frontend-secure.tls=true"
-      - "traefik.http.routers.res-gourmet-frontend-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.gourmet-secure.rule=PathPrefix(`/gourmet`)"
+      - "traefik.http.routers.gourmet-secure.entrypoints=websecure"
+      - "traefik.http.routers.gourmet-secure.tls=true"
+      - "traefik.http.routers.gourmet-secure.tls.certresolver=letsencrypt"
+      # Strip middleware para eliminar el prefijo /gourmet
+      - "traefik.http.middlewares.strip-gourmet.stripprefix.prefixes=/gourmet"
       # Especificar el puerto interno del contenedor (Nginx escucha en 80 por defecto)
-      - "traefik.http.services.res-gourmet-frontend.loadbalancer.server.port=80"
+      - "traefik.http.services.gourmet.loadbalancer.server.port=80"
 
